@@ -17,16 +17,18 @@ public class ScoreModuleBuilder implements ModuleBuilder {
     @Override
     public ModuleCollection<ScoreModule> load(Match match) {
         ModuleCollection<ScoreModule> results = new ModuleCollection<>();
+        boolean scoring = false;
         int pointsPerKill = 0;
         int pointsPerDeath = 0;
         int max = 0;
         for (Element score : match.getDocument().getRootElement().getChildren("score")) {
+            scoring = true;
             if (score.getChild("limit") != null) {
                 max = Numbers.parseInt(score.getChild("limit").getText());
                 if (max < 0) max = 0;
             }
             if ((max > 0 || score.getChild("time") != null || score.getChild("king") != null) &&
-                    match.getProto().smallerThan(new Proto(1, 3, 6))) {
+                    match.getProto().lessThan(new Proto(1, 3, 6))) {
                     pointsPerKill = 1;
                     pointsPerDeath = 1;
             }
@@ -39,7 +41,7 @@ public class ScoreModuleBuilder implements ModuleBuilder {
         }
         for (TeamModule team : Teams.getTeams()) {
             if (!team.isObserver()) {
-                results.add(new ScoreModule(team, pointsPerKill, pointsPerDeath, max));
+                results.add(new ScoreModule(scoring, team, pointsPerKill, pointsPerDeath, max));
             }
         }
         return results;
