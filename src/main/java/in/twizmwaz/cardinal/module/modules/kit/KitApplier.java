@@ -15,7 +15,7 @@ public class KitApplier implements Module {
         HandlerList.unregisterAll(this);
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPgmSpawn(CardinalSpawnEvent event) {
         final Kit kit = event.getSpawn().getKit();
         final Player player = event.getPlayer();

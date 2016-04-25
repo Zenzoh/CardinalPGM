@@ -16,13 +16,13 @@ import in.twizmwaz.cardinal.module.Module;
 import in.twizmwaz.cardinal.module.ModuleCollection;
 import in.twizmwaz.cardinal.module.modules.blitz.Blitz;
 import in.twizmwaz.cardinal.module.modules.cores.CoreObjective;
+import in.twizmwaz.cardinal.module.modules.ctf.FlagObjective;
 import in.twizmwaz.cardinal.module.modules.destroyable.DestroyableObjective;
 import in.twizmwaz.cardinal.module.modules.hill.HillObjective;
 import in.twizmwaz.cardinal.module.modules.score.ScoreModule;
 import in.twizmwaz.cardinal.module.modules.team.TeamModule;
 import in.twizmwaz.cardinal.module.modules.timeLimit.TimeLimit;
 import in.twizmwaz.cardinal.module.modules.wools.WoolObjective;
-import in.twizmwaz.cardinal.util.MiscUtil;
 import in.twizmwaz.cardinal.util.Scoreboards;
 import in.twizmwaz.cardinal.util.Strings;
 import in.twizmwaz.cardinal.util.Teams;
@@ -213,6 +213,10 @@ public class ScoreboardModule implements Module {
         currentHillScore = (getSpecificObjective() != null && getSpecificObjective().equals(HillObjective.class)) && !ScoreModule.matchHasScoring() ? 0 : -1;
         used = new ArrayList<>();
 
+        for (GameObjective obj : Teams.getShownSharedObjectives()) {
+            renderObjective(obj);
+        }
+
         for (TeamModule team : sortedTeams) {
             if (!team.isObserver() && team != prioritized && Teams.getShownObjectives(team).size() > 0) {
                 if (currentScore != 0) {
@@ -372,6 +376,8 @@ public class ScoreboardModule implements Module {
             if (objective != null) {
                 if (objective.equals(WoolObjective.class)) {
                     displayTitle = "Wools";
+                } else if (objective.equals(FlagObjective.class)) {
+                    displayTitle = "Flags";
                 } else if (objective.equals(CoreObjective.class)) {
                     displayTitle = "Cores";
                 } else if (objective.equals(DestroyableObjective.class)) {
@@ -384,7 +390,7 @@ public class ScoreboardModule implements Module {
             }
         }
         if (ScoreModule.matchHasScoring()) {
-            displayTitle = displayTitle.equals("") || displayTitle.equals("Hills") ? "Scores" : "Objectives";
+            displayTitle = displayTitle.equals("") || displayTitle.equals("Flags")|| displayTitle.equals("Hills") ? "Scores" : "Objectives";
         }
         if (Blitz.matchIsBlitz()) {
             String blitzTitle = GameHandler.getGameHandler().getMatch().getModules().getModule(Blitz.class).getTitle();
